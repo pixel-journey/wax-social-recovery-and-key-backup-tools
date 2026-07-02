@@ -1,26 +1,50 @@
 # wax-social-recovery-and-key-backup-tools — Social Recovery & Key Backup Tools
 
-> **Status:** 🔄 In Active Deep Refinement (PX Perfection Standard)  
-> **Category:** Security, Keys & Account Recovery (Antelope/WAX Focus)  
-> **Parent Catalog:** [pixel-journey/wax-ecosystem-blueprint-catalog](https://github.com/pixel-journey/wax-ecosystem-blueprint-catalog)
-> **Benchmark Standard:** gkniftyheads-tracker quality + Pixel Journey retro-pixel excellence + PX Perfection Standard v1.0
+> **Status:** 🔄 In Active Development (Pixel Journey Standard)  
+> **Category:** Security & Account Recovery (Core Antelope/WAX)  
+> **Parent Catalog:** [wax-ecosystem-blueprint-catalog](https://github.com/pixel-journey/wax-ecosystem-blueprint-catalog)
 
-**One-sentence goal:** Patterns, tools, and responsible best practices for social recovery, secure key backup, and account recovery strategies on Antelope/WAX chains.
+**Goal:** Provide a high-quality, educational, and practical reference for social recovery, secure key backup, and account recovery strategies on Antelope/WAX chains.
+
+This guide helps users and developers implement resilient recovery systems responsibly.
+
+---
+
+## Vision & Long-Term Participation Mindset
+
+Losing access to an account (especially the `owner` permission) is often irreversible and devastating. Social recovery and proper key backup strategies significantly reduce this risk and give users peace of mind.
+
+This blueprint provides practical, responsible patterns for implementing resilient account recovery systems.
+
+We build this for long-term participants who want their account security practices to include responsible recovery options.
+
+---
+
+## Quick Start
+
+**For Human Developers**
+1. Read the Educational Core and Best Practices sections.
+2. Review the Integration Guide.
+3. Use the patterns responsibly in your projects.
+
+**For AI Agents & AI-Assisted Development**
+- Start with `spec.yaml` for structured machine instructions.
+- Use the recovery patterns as high-quality context.
 
 ---
 
 ## 1. Educational Core — Why Social Recovery & Backups Matter
 
-Losing access to an account (especially the `owner` permission) is often irreversible and devastating on Antelope chains. Social recovery and proper key backup strategies significantly reduce this risk and give users peace of mind.
-
-This blueprint provides practical, responsible patterns for implementing resilient account recovery systems.
+Losing access to an account is often irreversible. Social recovery and proper key backup significantly reduce this risk.
 
 ### Key Concepts
 
-- **Social recovery**: Using trusted contacts or multi-sig setups to recover access.
-- **Key backup strategies**: Secure methods for storing and recovering keys or recovery information.
-- **Risks of social recovery**: Trusted contact compromise, collusion, or social engineering.
-- **Defense-in-depth**: Combining multiple recovery methods responsibly.
+| Concept                    | Description                                              | Why It Matters                              |
+|----------------------------|----------------------------------------------------------|---------------------------------------------|
+| Social recovery            | Using trusted contacts or multi-sig to recover access    | Provides a safety net for users             |
+| Key backup strategies      | Secure methods for storing and recovering keys           | Prevents permanent loss                     |
+| Risks of social recovery   | Trusted contact compromise, collusion, social engineering| Must be implemented carefully               |
+| Defense-in-depth           | Combining multiple recovery methods responsibly          | Stronger overall security posture           |
 
 ### Important Warnings
 
@@ -28,7 +52,7 @@ Social recovery is powerful but must be implemented carefully. Poorly designed r
 
 ### Learning Outcomes
 
-After studying this blueprint, you will be able to:
+After studying this repository, you should be able to:
 - Design responsible social recovery mechanisms
 - Implement secure key backup strategies
 - Understand the risks and trade-offs of different recovery approaches
@@ -36,55 +60,89 @@ After studying this blueprint, you will be able to:
 
 ---
 
-## 2. Design & Technical Recommendations
+## 2. Architecture & Design Decisions
 
-### Recommended Approach
-- Clean guide-style interface with strong trust signals and clear warnings
-- Interactive diagrams for recovery workflows
-- Practical code examples
-- Strong emphasis on responsible implementation
+### Recommended Tech Stack
 
-### Key Components
-- SocialRecoveryGuide
-- KeyBackupStrategies
-- RecoveryWorkflow
-- SecurityWarnings
-- CodeExamples
+- **Framework**: Next.js 15 + TypeScript (strict)
+- **UI**: Tailwind + shadcn/ui + framer-motion
+- **State**: Jotai or Zustand
+- **Design System**: Pixel Journey Design System
+
+### Core Component Architecture
+
+```
+/components/
+  SocialRecoveryGuide.tsx
+  KeyBackupStrategies.tsx
+  RecoveryWorkflow.tsx
+  SecurityWarnings.tsx
+```
+
+### Key Design Decisions
+
+- Strong emphasis on responsible implementation and clear warnings
+- Clean guide-style interface with trust signals
+- Interactive diagrams for recovery workflows where helpful
+- Practical code examples with security focus
 
 ---
 
-## 3. Machine-Optimized Spec (spec.yaml)
+## 3. Integration Guide
 
-```yaml
-blueprint:
-  id: wax-social-recovery-and-key-backup-tools
-  tier: 1
-  category: security-foundational
-  status: alpha-ready
+### How to Integrate This Pattern
 
-features:
-  - social_recovery_patterns
-  - key_backup_strategies
-  - recovery_workflow_visualization
-  - security_warnings_and_risks
-  - responsible_implementation_guidance
+1. Follow responsible social recovery design principles
+2. Implement secure key backup flows with clear user guidance
+3. Add strong warnings about risks and trade-offs
+4. Combine multiple recovery methods for defense-in-depth
 
-machine_instructions:
-  - "Create responsible social recovery setup guide with warnings"
-  - "Document secure key backup strategies with pros/cons"
-  - "Build visual recovery workflow diagrams"
-  - "Emphasize risks and best practices throughout"
+### Integration Levels
+
+- **Minimal**: Basic backup guidance and simple social recovery concepts
+- **Recommended**: Full patterns with warnings, workflows, and code examples
+- **Advanced**: Advanced multi-party recovery, custom policies
+
+---
+
+## 4. Best Practices
+
+- Always emphasize the risks of social recovery (compromise, collusion, social engineering)
+- Use defense-in-depth — combine multiple recovery methods
+- Provide clear, actionable guidance rather than just warnings
+- Test recovery flows thoroughly from the user's perspective
+- Make trust assumptions explicit
+- Prioritize both security and usability
+
+---
+
+## 5. Code Examples
+
+### Basic Social Recovery Concept (conceptual)
+
+```ts
+// Conceptual social recovery setup
+function setupSocialRecovery(contacts: string[], threshold: number) {
+  // Create multi-sig or recovery contract setup
+  // Return recovery configuration
+}
 ```
 
 ---
 
-## 4. Implementation Notes
+## 6. Machine Instructions (For AI Agents)
 
-Full patterns and examples are committed to the repository with strong emphasis on security and responsible design.
+See `spec.yaml` for structured instructions.
+
+Key instructions:
+- Create responsible social recovery setup guide with warnings
+- Document secure key backup strategies with pros/cons
+- Build visual recovery workflow diagrams
+- Emphasize risks and best practices throughout
 
 ---
 
-## 5. Ecosystem Position
+## 7. Ecosystem Position
 
 Direct companion to:
 - `wax-hardware-wallet-integration-patterns`
@@ -93,11 +151,18 @@ Direct companion to:
 
 Essential for long-term account safety education and tooling on Antelope chains.
 
+Builds on the foundational layer:
+- `pixel-journey-standards`
+- `gitbook-docs`
+- `pixel-journey-templates`
+- `wax-ecosystem-blueprint-catalog`
+
 ---
 
-## 6. License & Credits
+## 8. License & Credits
 
-MIT License — Built with ❤️ for safer account recovery on WAX and Antelope.
-Pixel Journey — Beautiful, responsible, educational interfaces for public blockchain data.
+MIT License
 
-*Last updated: July 02, 2026 — Accelerated Deep Refinement Pass*
+Pixel Journey — Educational, responsible, beautiful interfaces for public blockchain infrastructure.
+
+*Last updated: July 2026*
