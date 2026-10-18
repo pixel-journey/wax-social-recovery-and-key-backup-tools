@@ -1,168 +1,131 @@
-# wax-social-recovery-and-key-backup-tools — Social Recovery & Key Backup Tools
+# wax-social-recovery-and-key-backup-tools
 
-> **Status:** 🔄 In Active Development (Pixel Journey Standard)  
-> **Category:** Security & Account Recovery (Core Antelope/WAX)  
-> **Parent Catalog:** [wax-ecosystem-blueprint-catalog](https://github.com/pixel-journey/wax-ecosystem-blueprint-catalog)
+> **Status:** 🔄 Deep Refinement (PX Perfection Standard v1.1)  
+> **Category:** Security & Account Recovery  
+> **Parent Catalog:** [wax-ecosystem-blueprint-catalog](https://github.com/pixel-journey/wax-ecosystem-blueprint-catalog)  
+> **Related:** [ECOSYSTEM-RESILIENCE.md](https://github.com/pixel-journey/wax-ecosystem-blueprint-catalog/blob/main/ECOSYSTEM-RESILIENCE.md) · multi-sig · key management blueprints
 
-**Goal:** Provide a high-quality, educational, and practical reference for social recovery, secure key backup, and account recovery strategies on Antelope/WAX chains.
+**Goal:** Educational, practical patterns for **key backup** and **social / multi-party recovery** on Antelope/WAX — with explicit trade-offs, attack surfaces, and checklists. Not a promise that recovery is risk-free.
 
-This guide helps users and developers implement resilient recovery systems responsibly.
-
----
-
-## Vision & Long-Term Participation Mindset
-
-Losing access to an account (especially the `owner` permission) is often irreversible and devastating. Social recovery and proper key backup strategies significantly reduce this risk and give users peace of mind.
-
-This blueprint provides practical, responsible patterns for implementing resilient account recovery systems.
-
-We build this for long-term participants who want their account security practices to include responsible recovery options.
+Losing `owner` access is often permanent. Good backups and deliberate multi-party designs reduce that risk; poorly designed “friends can save me” flows create new ones.
 
 ---
 
-## Quick Start
+## Vision
 
-**For Human Developers**
-1. Read the Educational Core and Best Practices sections.
-2. Review the Integration Guide.
-3. Use the patterns responsibly in your projects.
+Long-term participants need a plan **before** a phone dies, a seed is lost, or a single operator disappears. This blueprint prioritizes:
 
-**For AI Agents & AI-Assisted Development**
-- Start with `spec.yaml` for structured machine instructions.
-- Use the recovery patterns as high-quality context.
+- **Defense in depth** — more than one independent recovery path
+- **Explicit trust** — who can collude, coerce, or socially engineer whom
+- **Owner vs active clarity** — Antelope permission model is not optional knowledge
+- **Calm documentation** — checklists over fear or hype
 
 ---
 
-## 1. Educational Core — Why Social Recovery & Backups Matter
+## Quick Starts
 
-Losing access to an account is often irreversible. Social recovery and proper key backup significantly reduce this risk.
+### Humans
+1. Read §1 (backup tiers + social recovery risks).
+2. Use `/examples` — pure checklist engines, warning panels, workflow steps, demo.
+3. Pair with multi-sig and hardware-wallet blueprints for production designs.
 
-### Key Concepts
-
-| Concept                    | Description                                              | Why It Matters                              |
-|----------------------------|----------------------------------------------------------|---------------------------------------------|
-| Social recovery            | Using trusted contacts or multi-sig to recover access    | Provides a safety net for users             |
-| Key backup strategies      | Secure methods for storing and recovering keys           | Prevents permanent loss                     |
-| Risks of social recovery   | Trusted contact compromise, collusion, social engineering| Must be implemented carefully               |
-| Defense-in-depth           | Combining multiple recovery methods responsibly          | Stronger overall security posture           |
-
-### Important Warnings
-
-Social recovery is powerful but must be implemented carefully. Poorly designed recovery systems can create new attack vectors.
-
-### Learning Outcomes
-
-After studying this repository, you should be able to:
-- Design responsible social recovery mechanisms
-- Implement secure key backup strategies
-- Understand the risks and trade-offs of different recovery approaches
-- Build recovery flows that are both usable and secure
+### AI agents
+1. Load `spec.yaml`.
+2. Use pure helpers in `examples/engines.ts` for checklist scoring.
+3. Never recommend schemes that give a single “helper” full owner control without labeling the risk.
 
 ---
 
-## 2. Architecture & Design Decisions
+## 1. Educational Core
 
-### Recommended Tech Stack
+### 1.1 Key concepts
 
-- **Framework**: Next.js 15 + TypeScript (strict)
-- **UI**: Tailwind + shadcn/ui + framer-motion
-- **State**: Jotai or Zustand
-- **Design System**: Pixel Journey Design System
+| Concept | Meaning |
+|---------|--------|
+| **Seed / key backup** | Offline, tested copies of material that can restore signing ability |
+| **Social recovery** | Trusted parties participate in restoring control (often via multi-sig / msig) |
+| **Threshold** | M-of-N so no single helper acts alone |
+| **Owner vs active** | On Antelope, owner can change active; active cannot replace owner — design recovery at the right level |
+| **Collusion / coercion** | Helpers may cooperate or be pressured — model that honestly |
 
-### Core Component Architecture
+### 1.2 Common failure modes
+
+| Failure | Why it hurts | Mitigation direction |
+|---------|----------------|----------------------|
+| Only one seed copy | Device loss = account loss | Multiple independent backups |
+| Unverified backup | “Backup” is blank or wrong | Periodic restore drills |
+| 1-of-N “social” recovery | One helper is full control | Real thresholds |
+| Helpers hold full seeds | Massive social-engineering surface | Prefer multi-sig weights, not seed sharing |
+| Recovery only in a SaaS app | App can vanish | Recipes in git + multi-sig on-chain |
+
+### 1.3 Learning outcomes
+
+- Choose backup tiers appropriate to account value
+- Design M-of-N recovery without single-helper capture
+- Run a recovery drill checklist
+- Label residual risks clearly for users
+
+---
+
+## 2. Architecture
+
+| Layer | Choice |
+|-------|--------|
+| Framework | Next.js 15 + TypeScript (strict) |
+| Logic | Pure checklist / risk helpers |
+| UI | Guide panels + workflow steps |
+| On-chain | Patterns via `eosio.msig` / account permissions — verify live |
 
 ```
-/components/
-  SocialRecoveryGuide.tsx
-  KeyBackupStrategies.tsx
-  RecoveryWorkflow.tsx
+/examples/
+  types.ts
+  engines.ts
   SecurityWarnings.tsx
-```
-
-### Key Design Decisions
-
-- Strong emphasis on responsible implementation and clear warnings
-- Clean guide-style interface with trust signals
-- Interactive diagrams for recovery workflows where helpful
-- Practical code examples with security focus
-
----
-
-## 3. Integration Guide
-
-### How to Integrate This Pattern
-
-1. Follow responsible social recovery design principles
-2. Implement secure key backup flows with clear user guidance
-3. Add strong warnings about risks and trade-offs
-4. Combine multiple recovery methods for defense-in-depth
-
-### Integration Levels
-
-- **Minimal**: Basic backup guidance and simple social recovery concepts
-- **Recommended**: Full patterns with warnings, workflows, and code examples
-- **Advanced**: Advanced multi-party recovery, custom policies
-
----
-
-## 4. Best Practices
-
-- Always emphasize the risks of social recovery (compromise, collusion, social engineering)
-- Use defense-in-depth — combine multiple recovery methods
-- Provide clear, actionable guidance rather than just warnings
-- Test recovery flows thoroughly from the user's perspective
-- Make trust assumptions explicit
-- Prioritize both security and usability
-
----
-
-## 5. Code Examples
-
-### Basic Social Recovery Concept (conceptual)
-
-```ts
-// Conceptual social recovery setup
-function setupSocialRecovery(contacts: string[], threshold: number) {
-  // Create multi-sig or recovery contract setup
-  // Return recovery configuration
-}
+  BackupChecklist.tsx
+  RecoveryWorkflow.tsx
+  demo.tsx
 ```
 
 ---
 
-## 6. Machine Instructions (For AI Agents)
+## 3. Integration levels
 
-See `spec.yaml` for structured instructions.
-
-Key instructions:
-- Create responsible social recovery setup guide with warnings
-- Document secure key backup strategies with pros/cons
-- Build visual recovery workflow diagrams
-- Emphasize risks and best practices throughout
+| Level | Scope |
+|-------|--------|
+| **Minimal** | Backup checklist + warnings |
+| **Recommended** | Workflow + threshold guidance + multi-sig link |
+| **Advanced** | Guided msig propose for recovery policies, hardware co-signers |
 
 ---
 
-## 7. Ecosystem Position
+## 4. Best practices
 
-Direct companion to:
-- `wax-hardware-wallet-integration-patterns`
+**Do**
+- Test restores on a throwaway account first
+- Keep owner keys offline / hardware where value is high
+- Document recovery steps outside any single website
+
+**Don’t**
+- SMS or email “recovery codes” as the only path for high-value accounts
+- Share full seeds in group chats
+- Assume social recovery removes the need for personal backups
+
+---
+
+## 5. Ecosystem position
+
+Companion to:
 - `wax-secure-key-management-and-privacy-tools`
-- Permission and key rotation tools
-
-Essential for long-term account safety education and tooling on Antelope chains.
-
-Builds on the foundational layer:
-- `pixel-journey-standards`
-- `gitbook-docs`
-- `pixel-journey-templates`
-- `wax-ecosystem-blueprint-catalog`
+- `wax-multi-sig-proposal-builder-and-simulator`
+- `wax-safe-key-rotation-assistant`
+- `wax-hardware-wallet-integration-patterns`
 
 ---
 
-## 8. License & Credits
+## 6. License
 
-MIT License
+MIT — **Pixel Journey**
 
-Pixel Journey — Educational, responsible, beautiful interfaces for public blockchain infrastructure.
+*Exemplifies [PX Perfection Standard](https://github.com/pixel-journey/wax-ecosystem-blueprint-catalog/blob/main/PX-PERFECTION-STANDARD.md) v1.1.*
 
-*Last updated: July 2026*
+*Last major refinement pass: October 2026*
