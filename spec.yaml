@@ -3,68 +3,40 @@ blueprint:
   name: Social Recovery & Key Backup Tools
   tier: 1
   category: security-foundational
-  status: in-development
-  version: 0.2
+  status: refined
+  version: "0.5.0"
+  last_refined: "2026-10-18"
 
 metadata:
   description: |
-    Patterns, tools, and responsible best practices for social recovery,
-    secure key backup, and account recovery strategies on Antelope/WAX chains.
-  target_audience:
-    - Human developers and users implementing recovery systems
-    - AI agents generating social recovery and backup code
-    - Teams focused on long-term account safety on WAX/Antelope
+    Educational backup posture scoring and social recovery risk analysis for
+    Antelope/WAX — checklists, warnings, workflow steps. Not a custody product.
   related_blueprints:
-    - wax-hardware-wallet-integration-patterns
     - wax-secure-key-management-and-privacy-tools
-    - wax-permission-visualizer-and-editor
+    - wax-multi-sig-proposal-builder-and-simulator
+    - wax-hardware-wallet-integration-patterns
+  related_docs:
+    - wax-ecosystem-blueprint-catalog/ECOSYSTEM-RESILIENCE.md
+    - wax-ecosystem-blueprint-catalog/PX-PERFECTION-STANDARD.md
+
+invariants:
+  - Checklists and risks are pure functions
+  - Risks cite triggers
+  - Single-helper full control flagged high
+  - Seed-sharing with helpers flagged high
+  - Runbooks must not depend on a single website only
 
 features:
-  - social_recovery_patterns
-  - key_backup_strategies
-  - recovery_workflow_visualization
-  - security_warnings_and_risks
-  - responsible_implementation_guidance
-  - multiple_integration_levels
-
-integration_levels:
-  minimal:
-    description: Basic backup guidance and simple social recovery concepts
-    recommended_for: Learning and basic implementations
-  recommended:
-    description: Full patterns with warnings, workflows, and code examples
-    recommended_for: Most production and user-facing tools
-  advanced:
-    description: Advanced multi-party recovery, custom policies
-    recommended_for: Complex or high-security recovery systems
+  implemented:
+    - scoreBackupPosture
+    - analyzeSocialRecovery
+    - BackupChecklist, SecurityWarnings, RecoveryWorkflow, demo
 
 machine_instructions:
-  - |
-    Create responsible social recovery setup guide with clear warnings.
-  - |
-    Document secure key backup strategies with pros/cons and examples.
-  - |
-    Build visual recovery workflow diagrams and explanations.
-  - |
-    Emphasize risks, trade-offs, and best practices throughout.
-  - |
-    Support multiple integration levels with progressive depth.
+  - Use examples/engines.ts for scoring and risks
+  - Prefer multi-sig weights over sharing full seeds
+  - Reference PX §11 for runbook continuity
 
 technical_requirements:
   framework: Next.js 15 + TypeScript (strict)
-  styling: Tailwind + shadcn/ui + framer-motion
-  design_system: pixel-journey-design-system
-
-best_practices:
-  - Always emphasize the risks of social recovery (compromise, collusion, social engineering)
-  - Use defense-in-depth — combine multiple recovery methods
-  - Provide clear, actionable guidance rather than just warnings
-  - Test recovery flows thoroughly from the user's perspective
-  - Make trust assumptions explicit
-  - Prioritize both security and usability
-
-future_extensions:
-  - Advanced multi-party recovery mechanisms
-  - Integration with hardware wallet recovery flows
-  - Batch backup management tools
-  - Educational simulators for recovery scenarios
+  styling: Tailwind CSS
