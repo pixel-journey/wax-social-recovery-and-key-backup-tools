@@ -3,6 +3,7 @@
 import React, { useId, useMemo, useState } from 'react';
 import { BackupChecklist } from '../examples/BackupChecklist';
 import { OwnerActivePrimer } from '../examples/OwnerActivePrimer';
+import { PermissionSummaryPanel } from '../examples/PermissionSummaryPanel';
 import { RecoveryWorkflow } from '../examples/RecoveryWorkflow';
 import { RelatedBlueprints } from '../examples/RelatedBlueprints';
 import { RunbookPanel } from '../examples/RunbookPanel';
@@ -43,12 +44,14 @@ export default function SocialRecoveryPage() {
             SOCIAL RECOVERY & KEY BACKUP
           </h1>
           <p className="text-sm opacity-60 mt-2 max-w-xl">
-            Educational posture scoring, owner/active primer, and offline runbook
-            draft. Not custody or legal advice.
+            Posture scoring, owner/active primer, live public permissions, offline
+            runbook. Not custody or legal advice.
           </p>
         </header>
 
         <OwnerActivePrimer />
+
+        <PermissionSummaryPanel />
 
         <section
           className="border border-white/10 rounded-2xl bg-black/40 p-5 space-y-4"
@@ -221,8 +224,8 @@ export default function SocialRecoveryPage() {
         <RelatedBlueprints />
 
         <p className="text-xs opacity-50">
-          Engines: <code className="text-emerald-400/80">scoreBackupPosture</code>,{' '}
-          <code className="text-emerald-400/80">analyzeSocialRecovery</code>,{' '}
+          <code className="text-emerald-400/80">fetchAccountPermissions</code> ·{' '}
+          <code className="text-emerald-400/80">scoreBackupPosture</code> ·{' '}
           <code className="text-emerald-400/80">generateRunbookMarkdown</code>
         </p>
       </div>
