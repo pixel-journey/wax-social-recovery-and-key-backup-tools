@@ -2,54 +2,50 @@
 
 > **Trust Label:** `educational-reference`  
 > **Verification:** [VERIFICATION-LOG.md](VERIFICATION-LOG.md)  
-> **Status:** 🔄 Pass 1 — pure engines + interactive app shell  
+> **Status:** 🔄 Pass 2 — runbook + owner/active primer + related blueprints  
 > **Parent Catalog:** [wax-ecosystem-blueprint-catalog](https://github.com/pixel-journey/wax-ecosystem-blueprint-catalog)
 
-Educational **key backup posture** and **social / multi-party recovery** risk analysis for Antelope/WAX. Not a custody product and not a promise that recovery is risk-free.
+Educational **key backup posture** and **social recovery** risk analysis for Antelope/WAX — plus an **offline-first runbook** draft. Not a custody product.
 
 ## Quick start
 
 ```bash
-npm install
-npm test
-npm run dev
+npm install && npm test && npm run dev
 ```
 
 ```ts
 import { scoreBackupPosture, analyzeSocialRecovery } from "./examples/engines";
+import { generateRunbookMarkdown } from "./examples/runbook";
 
-const { score } = scoreBackupPosture({
+const posture = {
   offlineCopies: 2,
   restoreDrilled: true,
   ownerSeparatedFromDaily: true,
   writtenRunbook: true,
-});
-
-const risks = analyzeSocialRecovery({
+};
+const policy = {
   helperCount: 3,
   threshold: 2,
   helpersHoldFullSeeds: false,
   usesMultisigWeights: true,
-});
+};
+
+scoreBackupPosture(posture);
+analyzeSocialRecovery(policy);
+generateRunbookMarkdown({ accountName: "alice.wam", posture, policy });
 ```
 
-## Core ideas
+## Pass 2 surface
 
-| Concept | Meaning |
-|---------|--------|
-| Seed / key backup | Offline, tested copies that restore signing ability |
-| Social recovery | Trusted parties help restore control (often msig) |
-| Threshold | M-of-N so no single helper acts alone |
-| Owner vs active | Recover at the right Antelope permission level |
+| Piece | Role |
+|-------|------|
+| Owner vs active primer | Antelope permission model in plain language |
+| Interactive checklists | Backup score + social risk flags |
+| Runbook panel | Copy / download markdown from current answers |
+| Related blueprints | Multi-sig, hardware, resilience links |
 
-**Do:** test restores, separate owner from daily keys, written runbooks, real thresholds.  
-**Don’t:** share full seeds in chats, 1-of-N “social” recovery, rely on a single website for instructions (PX §11).
-
-## Related
-
-- `wax-multi-sig-proposal-builder-and-simulator`
-- `wax-hardware-wallet-integration-patterns`
-- `wax-secure-key-management-and-privacy-tools`
+**Do:** real M-of-N, hardware for owner, restore drills, offline docs.  
+**Don’t:** share full seeds, 1-of-N “helpers,” single-website runbooks.
 
 ## License
 
