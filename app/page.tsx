@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useId, useMemo, useState } from 'react';
+import React, { useCallback, useId, useMemo, useState } from 'react';
 import { BackupChecklist } from '../examples/BackupChecklist';
 import { OwnerActivePrimer } from '../examples/OwnerActivePrimer';
 import { PermissionSummaryPanel } from '../examples/PermissionSummaryPanel';
@@ -9,6 +9,7 @@ import { RelatedBlueprints } from '../examples/RelatedBlueprints';
 import { RunbookPanel } from '../examples/RunbookPanel';
 import { SecurityWarnings } from '../examples/SecurityWarnings';
 import { analyzeSocialRecovery, scoreBackupPosture } from '../examples/engines';
+import type { PostureHints } from '../examples/live/getAccount';
 import type { BackupPosture, SocialRecoveryPolicy } from '../examples/types';
 
 export default function SocialRecoveryPage() {
@@ -29,6 +30,25 @@ export default function SocialRecoveryPage() {
     usesMultisigWeights: false,
   });
 
+  const [liveHint, setLiveHint] = useState<string | null>(null);
+
+  const onLiveView = useCallback((_view: unknown, hints: PostureHints) => {
+    setLiveHint(hints.reason);
+    setPosture((p) => ({
+      ...p,
+      ownerSeparatedFromDaily: hints.ownerSeparatedFromDaily,
+    }));
+    setPolicy((pol) => ({
+      ...pol,
+      usesMultisigWeights: hints.usesMultisigWeights,
+      helperCount:
+        hints.suggestedHelperCount ?? pol.helperCount,
+      threshold: hints.suggestedThreshold ?? pol.threshold,
+      // Live structure never implies seed-sharing
+      helpersHoldFullSeeds: false,
+    }));
+  }, []);
+
   const backupScore = useMemo(() => scoreBackupPosture(posture), [posture]);
   const risks = useMemo(() => analyzeSocialRecovery(policy), [policy]);
   const highCount = risks.filter((r) => r.level === 'high').length;
@@ -44,14 +64,20 @@ export default function SocialRecoveryPage() {
             SOCIAL RECOVERY & KEY BACKUP
           </h1>
           <p className="text-sm opacity-60 mt-2 max-w-xl">
-            Posture scoring, owner/active primer, live public permissions, offline
-            runbook. Not custody or legal advice.
+            Live public permissions, posture scoring, offline runbooks. Educational
+            only — not custody advice.
           </p>
         </header>
 
         <OwnerActivePrimer />
 
-        <PermissionSummaryPanel />
+        <PermissionSummaryPanel onView={onLiveView} />
+
+        {liveHint && (
+          <p className="text-xs text-cyan-200/80" role="status">
+            Applied from chain: {liveHint}
+          </p>
+        )}
 
         <section
           className="border border-white/10 rounded-2xl bg-black/40 p-5 space-y-4"
@@ -225,7 +251,7 @@ export default function SocialRecoveryPage() {
 
         <p className="text-xs opacity-50">
           <code className="text-emerald-400/80">fetchAccountPermissions</code> ·{' '}
-          <code className="text-emerald-400/80">scoreBackupPosture</code> ·{' '}
+          <code className="text-emerald-400/80">derivePostureHints</code> ·{' '}
           <code className="text-emerald-400/80">generateRunbookMarkdown</code>
         </p>
       </div>
