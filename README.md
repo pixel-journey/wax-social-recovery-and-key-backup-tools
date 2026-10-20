@@ -2,10 +2,10 @@
 
 > **Trust Label:** `educational-reference`  
 > **Verification:** [VERIFICATION-LOG.md](VERIFICATION-LOG.md)  
-> **Status:** 🔄 Pass 2 — runbook + owner/active primer + related blueprints  
+> **Status:** 🔄 Pass 3 — live read-only permission summary  
 > **Parent Catalog:** [wax-ecosystem-blueprint-catalog](https://github.com/pixel-journey/wax-ecosystem-blueprint-catalog)
 
-Educational **key backup posture** and **social recovery** risk analysis for Antelope/WAX — plus an **offline-first runbook** draft. Not a custody product.
+Educational backup posture, social recovery risks, offline runbooks, and **public** `get_account` permission inspection for WAX/Antelope.
 
 ## Quick start
 
@@ -14,38 +14,21 @@ npm install && npm test && npm run dev
 ```
 
 ```ts
-import { scoreBackupPosture, analyzeSocialRecovery } from "./examples/engines";
-import { generateRunbookMarkdown } from "./examples/runbook";
+import { fetchAccountPermissions } from "./examples/live/getAccount";
 
-const posture = {
-  offlineCopies: 2,
-  restoreDrilled: true,
-  ownerSeparatedFromDaily: true,
-  writtenRunbook: true,
-};
-const policy = {
-  helperCount: 3,
-  threshold: 2,
-  helpersHoldFullSeeds: false,
-  usesMultisigWeights: true,
-};
-
-scoreBackupPosture(posture);
-analyzeSocialRecovery(policy);
-generateRunbookMarkdown({ accountName: "alice.wam", posture, policy });
+const view = await fetchAccountPermissions("eosio");
+// view.owner / view.active thresholds, keys, account auths + structural notes
 ```
 
-## Pass 2 surface
+## Pass 3
 
 | Piece | Role |
 |-------|------|
-| Owner vs active primer | Antelope permission model in plain language |
-| Interactive checklists | Backup score + social risk flags |
-| Runbook panel | Copy / download markdown from current answers |
-| Related blueprints | Multi-sig, hardware, resilience links |
+| `fetchAccountPermissions` | RPC `get_account` → structured owner/active |
+| Structural notes | Shared owner/active keys, single-key owner, multi-party owner |
+| `PermissionSummaryPanel` | UI — never requests private keys |
 
-**Do:** real M-of-N, hardware for owner, restore drills, offline docs.  
-**Don’t:** share full seeds, 1-of-N “helpers,” single-website runbooks.
+Still educational only. Pair with multi-sig + hardware blueprints for production designs.
 
 ## License
 
