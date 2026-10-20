@@ -1,9 +1,27 @@
-# REFINEMENT_COMPLETION_REPORT.md
+# Refinement completion — wax-social-recovery-and-key-backup-tools
 
-**Date:** 2026-10-18  
-**Score:** ~94–96/100  
-**Status:** ✅ Deeply refined
+**Trust label:** `educational-reference`  
+**Passes:** 1–4 (2026-10-20)
 
-Backup posture scoring, social recovery risk engine, checklist/warning/workflow UI, PX §11 runbook continuity.
+## Delivered
 
-**Next suggestion:** `wax-hardware-wallet-integration-patterns`
+| Pass | Scope |
+|------|--------|
+| 1 | Gate 0 (package/CI/tests), interactive posture + policy UI |
+| 2 | Owner/active primer, runbook markdown export, related blueprints, a11y |
+| 3 | Live read-only `get_account` permission summary |
+| 4 | RPC fallbacks, `derivePostureHints` → checklist, sample accounts, branched recovery workflow |
+
+## Explicit non-goals
+
+- Not a custody or recovery service
+- Does not propose or sign msig (see multi-sig blueprint)
+- Does not handle private keys or seed material
+
+## Verify
+
+```bash
+npm install && npm test && npm run typecheck
+```
+
+See [VERIFICATION-LOG.md](VERIFICATION-LOG.md).
