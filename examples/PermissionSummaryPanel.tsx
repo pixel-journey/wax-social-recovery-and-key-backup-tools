@@ -2,10 +2,14 @@
 
 import { useCallback, useId, useState } from "react";
 import {
+  derivePostureHints,
   fetchAccountPermissions,
   type AccountPermissionView,
   type PermissionSummary,
+  type PostureHints,
 } from "./live/getAccount";
+
+const SAMPLE_ACCOUNTS = ["eosio", "atomicassets", "atomicpacksx"] as const;
 
 function PermCard({ perm }: { perm: PermissionSummary }) {
   return (
@@ -44,32 +48,45 @@ function PermCard({ perm }: { perm: PermissionSummary }) {
 export interface PermissionSummaryPanelProps {
   className?: string;
   defaultAccount?: string;
+  onView?: (view: AccountPermissionView, hints: PostureHints) => void;
 }
 
 /** Read-only chain lookup — never asks for private keys. */
 export function PermissionSummaryPanel({
   className = "",
   defaultAccount = "",
+  onView,
 }: PermissionSummaryPanelProps) {
   const headingId = useId();
   const [account, setAccount] = useState(defaultAccount);
   const [view, setView] = useState<AccountPermissionView | null>(null);
+  const [hints, setHints] = useState<PostureHints | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const v = await fetchAccountPermissions(account);
-      setView(v);
-    } catch (e) {
-      setView(null);
-      setError(e instanceof Error ? e.message : "get_account failed");
-    } finally {
-      setLoading(false);
-    }
-  }, [account]);
+  const load = useCallback(
+    async (name?: string) => {
+      const target = (name ?? account).trim();
+      if (!target) return;
+      setAccount(target);
+      setLoading(true);
+      setError(null);
+      try {
+        const v = await fetchAccountPermissions(target);
+        const h = derivePostureHints(v);
+        setView(v);
+        setHints(h);
+        onView?.(v, h);
+      } catch (e) {
+        setView(null);
+        setHints(null);
+        setError(e instanceof Error ? e.message : "get_account failed");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [account, onView]
+  );
 
   return (
     <section
@@ -80,9 +97,23 @@ export function PermissionSummaryPanel({
         Live permissions (read-only)
       </h3>
       <p className="text-sm text-cyan-100/80 leading-relaxed">
-        Fetches public <code className="text-cyan-200">get_account</code> data.
-        Educational structural notes only — not a security audit. Never paste private keys.
+        Public <code className="text-cyan-200">get_account</code> only, with RPC
+        fallbacks. Structural notes — not an audit. Never paste private keys.
       </p>
+
+      <div className="flex flex-wrap gap-2" role="group" aria-label="Sample accounts">
+        {SAMPLE_ACCOUNTS.map((a) => (
+          <button
+            key={a}
+            type="button"
+            onClick={() => void load(a)}
+            disabled={loading}
+            className="px-2.5 py-1 rounded-lg text-xs font-mono bg-white/10 hover:bg-white/15 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
+          >
+            {a}
+          </button>
+        ))}
+      </div>
 
       <div className="flex flex-col sm:flex-row gap-2">
         <label className="sr-only" htmlFor="live-account">
@@ -92,13 +123,16 @@ export function PermissionSummaryPanel({
           id="live-account"
           value={account}
           onChange={(e) => setAccount(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") void load();
+          }}
           className="flex-1 rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-sm font-mono focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
           placeholder="account.wam"
           autoComplete="off"
         />
         <button
           type="button"
-          onClick={load}
+          onClick={() => void load()}
           disabled={loading || !account.trim()}
           className="px-4 py-2 rounded-xl bg-cyan-600 text-sm font-medium disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
         >
@@ -136,6 +170,12 @@ export function PermissionSummaryPanel({
                 <li key={n}>{n}</li>
               ))}
             </ul>
+          )}
+          {hints && (
+            <p className="text-xs text-cyan-200/90 border border-cyan-500/20 rounded-lg p-2">
+              Hint: {hints.reason}
+              {onView ? " · Applied to checklists below when loaded." : ""}
+            </p>
           )}
           <p className="text-[10px] opacity-40 break-all">source: {view.source}</p>
         </div>
