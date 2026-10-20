@@ -33,9 +33,13 @@ export function SecurityWarnings({
       <p className="text-sm text-white/60 mb-5">
         Structural flags only — not a security audit.
       </p>
-      <ul className="space-y-3">
+      <ul className="space-y-3" aria-live="polite">
         {risks.map((r) => (
-          <li key={r.id} className={`rounded-xl border p-3 text-sm ${levelClass[r.level]}`}>
+          <li
+            key={r.id}
+            className={`rounded-xl border p-3 text-sm ${levelClass[r.level]}`}
+            role={r.level === "high" ? "alert" : undefined}
+          >
             <div className="flex justify-between gap-2">
               <span className="font-medium">{r.title}</span>
               <span className="text-xs uppercase opacity-80">{r.level}</span>
