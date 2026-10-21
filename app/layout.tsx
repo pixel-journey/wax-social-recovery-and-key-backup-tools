@@ -1,3 +1,4 @@
+import { Cases } from "../src/Cases";
 import type { ReactNode } from "react";
 
 export const metadata = {
@@ -9,7 +10,8 @@ export const metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body className="bg-black text-white antialiased">{children}</body>
+      <body className="bg-black text-white antialiased">{children}
+        <Cases /></body>
     </html>
   );
 }

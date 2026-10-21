@@ -14,7 +14,7 @@ npm install && npm test && npm run dev
 ```
 
 ```ts
-import { fetchAccountPermissions, derivePostureHints } from "./examples/live/getAccount";
+import { fetchAccountPermissions, derivePostureHints } from "./src/live/getAccount";
 
 const view = await fetchAccountPermissions("eosio");
 const hints = derivePostureHints(view);
@@ -34,3 +34,9 @@ const hints = derivePostureHints(view);
 ## License
 
 MIT — **Pixel Journey**
+
+## Queries and unsigned transactions
+
+`src/api.ts` builds the HTTP requests. `src/usecases.ts` is the worked case: those requests, and an unsigned transaction when this repo already has an action or the chain action is the standard Antelope one for the topic. `executed` is false. Nothing is sent.
+
+The code used to sit in `examples/`. GitHub treats that directory as documentation, so the language bar hid the TypeScript.

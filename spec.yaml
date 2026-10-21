@@ -33,7 +33,7 @@ features:
     - BackupChecklist, SecurityWarnings, RecoveryWorkflow, demo
 
 machine_instructions:
-  - Use examples/engines.ts for scoring and risks
+  - Use src/engines.ts for scoring and risks
   - Prefer multi-sig weights over sharing full seeds
   - Reference PX §11 for runbook continuity
 

@@ -1,16 +1,16 @@
 'use client';
 
 import React, { useCallback, useId, useMemo, useState } from 'react';
-import { BackupChecklist } from '../examples/BackupChecklist';
-import { OwnerActivePrimer } from '../examples/OwnerActivePrimer';
-import { PermissionSummaryPanel } from '../examples/PermissionSummaryPanel';
-import { RecoveryWorkflow } from '../examples/RecoveryWorkflow';
-import { RelatedBlueprints } from '../examples/RelatedBlueprints';
-import { RunbookPanel } from '../examples/RunbookPanel';
-import { SecurityWarnings } from '../examples/SecurityWarnings';
-import { analyzeSocialRecovery, scoreBackupPosture } from '../examples/engines';
-import type { PostureHints } from '../examples/live/getAccount';
-import type { BackupPosture, SocialRecoveryPolicy } from '../examples/types';
+import { BackupChecklist } from '../src/BackupChecklist';
+import { OwnerActivePrimer } from '../src/OwnerActivePrimer';
+import { PermissionSummaryPanel } from '../src/PermissionSummaryPanel';
+import { RecoveryWorkflow } from '../src/RecoveryWorkflow';
+import { RelatedBlueprints } from '../src/RelatedBlueprints';
+import { RunbookPanel } from '../src/RunbookPanel';
+import { SecurityWarnings } from '../src/SecurityWarnings';
+import { analyzeSocialRecovery, scoreBackupPosture } from '../src/engines';
+import type { PostureHints } from '../src/live/getAccount';
+import type { BackupPosture, SocialRecoveryPolicy } from '../src/types';
 
 export default function SocialRecoveryPage() {
   const scoreId = useId();
