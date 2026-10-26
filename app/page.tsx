@@ -1,7 +1,9 @@
 'use client';
 
 import React, { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { AuthorityModelsPanel } from '../src/AuthorityModelsPanel';
 import { BackupChecklist } from '../src/BackupChecklist';
+import { DrillsPanel } from '../src/DrillsPanel';
 import { ExamplesPanel } from '../src/ExamplesPanel';
 import { OwnerActivePrimer } from '../src/OwnerActivePrimer';
 import { PermissionSummaryPanel } from '../src/PermissionSummaryPanel';
@@ -105,8 +107,8 @@ export default function SocialRecoveryPage() {
             SOCIAL RECOVERY & KEY BACKUP
           </h1>
           <p className="text-sm opacity-60 mt-2 max-w-xl">
-            Weighted authorities on Antelope — not Cloud Wallet password reset, not
-            full-seed sharing. Worked examples below.
+            On-chain weighted recovery · offline backups · drills · not Cloud Wallet
+            password reset.
           </p>
         </header>
 
@@ -116,9 +118,8 @@ export default function SocialRecoveryPage() {
         >
           <p className="font-medium text-sm">Product recovery ≠ on-chain recovery</p>
           <p>
-            Cloud Wallet “forgot password” is a wallet product path. This tool is
-            about account permissions: offline backups, owner/active separation, and
-            M-of-N helpers who do not each hold your whole seed.
+            Prefer account-auth or multi-key weights on <code>owner</code>. Never teach
+            full-seed sharing as “social recovery.”
           </p>
         </section>
 
@@ -129,6 +130,8 @@ export default function SocialRecoveryPage() {
             setMessage('Example applied to checklists');
           }}
         />
+
+        <AuthorityModelsPanel />
 
         <OwnerActivePrimer />
 
@@ -322,6 +325,8 @@ export default function SocialRecoveryPage() {
 
         <RunbookPanel posture={posture} policy={policy} />
 
+        <DrillsPanel />
+
         <RecoveryWorkflow />
 
         <RelatedBlueprints />
@@ -332,7 +337,7 @@ export default function SocialRecoveryPage() {
           </p>
         )}
 
-        <p className="text-xs opacity-50">Passes 5–9 · never paste keys</p>
+        <p className="text-xs opacity-50">Passes 1–10 · educational-reference</p>
       </div>
     </div>
   );
