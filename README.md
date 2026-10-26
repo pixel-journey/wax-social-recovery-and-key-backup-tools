@@ -1,14 +1,14 @@
 # wax-social-recovery-and-key-backup-tools
 
 > **Trust label:** `educational-reference`  
-> **Status:** **Passes 1–10** — education complete for this scope (2026-10-26)
+> **Status:** Passes **1–11** (2026-10-26)
 
-Backup posture, **on-chain social recovery** (weighted authorities), worked examples, authority models, drills, offline runbooks, read-only `get_account`.
+On-chain **social recovery** (weighted authorities) + **key backup** education for WAX: scenarios, authority models, hybrid sketches, drills, myths, glossary, runbooks, live permission probe.
 
 ```bash
 npm install && npm test && npm run build && npm run dev
 ```
 
-[EDUCATION.md](./EDUCATION.md) · [POLICY.md](./POLICY.md) · [DEPLOY.md](./DEPLOY.md)
+[EDUCATION.md](./EDUCATION.md) · [POLICY.md](./POLICY.md)
 
 MIT — Pixel Journey

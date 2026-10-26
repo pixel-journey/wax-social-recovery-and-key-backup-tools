@@ -5,6 +5,9 @@ import { AuthorityModelsPanel } from '../src/AuthorityModelsPanel';
 import { BackupChecklist } from '../src/BackupChecklist';
 import { DrillsPanel } from '../src/DrillsPanel';
 import { ExamplesPanel } from '../src/ExamplesPanel';
+import { GlossaryPanel } from '../src/GlossaryPanel';
+import { HybridSketchPanel } from '../src/HybridSketchPanel';
+import { MythsPanel } from '../src/MythsPanel';
 import { OwnerActivePrimer } from '../src/OwnerActivePrimer';
 import { PermissionSummaryPanel } from '../src/PermissionSummaryPanel';
 import { RecoveryWorkflow } from '../src/RecoveryWorkflow';
@@ -12,6 +15,7 @@ import { RelatedBlueprints } from '../src/RelatedBlueprints';
 import { RunbookPanel } from '../src/RunbookPanel';
 import { SecurityWarnings } from '../src/SecurityWarnings';
 import { analyzeSocialRecovery, scoreBackupPosture } from '../src/engines';
+import { exportPlanJson } from '../src/exportPlan';
 import type { PostureHints } from '../src/live/getAccount';
 import {
   buildShareSearchParam,
@@ -38,6 +42,7 @@ export default function SocialRecoveryPage() {
     usesMultisigWeights: false,
   });
 
+  const [accountLabel, setAccountLabel] = useState('alice.wam');
   const [liveHint, setLiveHint] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
@@ -96,6 +101,17 @@ export default function SocialRecoveryPage() {
     }
   };
 
+  const copyJson = async () => {
+    try {
+      await navigator.clipboard.writeText(
+        exportPlanJson(accountLabel.trim() || 'account', posture, policy)
+      );
+      setMessage('Plan JSON copied');
+    } catch {
+      setMessage('Clipboard unavailable');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white p-6">
       <div className="max-w-3xl mx-auto space-y-8">
@@ -107,8 +123,7 @@ export default function SocialRecoveryPage() {
             SOCIAL RECOVERY & KEY BACKUP
           </h1>
           <p className="text-sm opacity-60 mt-2 max-w-xl">
-            On-chain weighted recovery · offline backups · drills · not Cloud Wallet
-            password reset.
+            Weighted on-chain recovery · offline backups · drills · myths · glossary
           </p>
         </header>
 
@@ -123,6 +138,8 @@ export default function SocialRecoveryPage() {
           </p>
         </section>
 
+        <MythsPanel />
+
         <ExamplesPanel
           onApply={(p, pol) => {
             setPosture(p);
@@ -132,6 +149,8 @@ export default function SocialRecoveryPage() {
         />
 
         <AuthorityModelsPanel />
+
+        <HybridSketchPanel />
 
         <OwnerActivePrimer />
 
@@ -167,6 +186,15 @@ export default function SocialRecoveryPage() {
             </p>
           </div>
 
+          <label className="block text-xs opacity-70">
+            Account label (for exports)
+            <input
+              className="mt-1 w-full rounded-lg border border-white/15 bg-black/50 px-3 py-2 font-mono text-sm"
+              value={accountLabel}
+              onChange={(e) => setAccountLabel(e.target.value)}
+            />
+          </label>
+
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
@@ -174,6 +202,13 @@ export default function SocialRecoveryPage() {
               onClick={() => void copyShare()}
             >
               Copy share URL
+            </button>
+            <button
+              type="button"
+              className="px-3 py-2 rounded-lg text-sm bg-sky-700"
+              onClick={() => void copyJson()}
+            >
+              Copy plan JSON
             </button>
             <button
               type="button"
@@ -329,6 +364,8 @@ export default function SocialRecoveryPage() {
 
         <RecoveryWorkflow />
 
+        <GlossaryPanel />
+
         <RelatedBlueprints />
 
         {message && (
@@ -337,7 +374,7 @@ export default function SocialRecoveryPage() {
           </p>
         )}
 
-        <p className="text-xs opacity-50">Passes 1–10 · educational-reference</p>
+        <p className="text-xs opacity-50">Passes 1–11 · educational-reference</p>
       </div>
     </div>
   );
