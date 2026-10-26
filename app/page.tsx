@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { AuthorityModelsPanel } from '../src/AuthorityModelsPanel';
 import { BackupChecklist } from '../src/BackupChecklist';
+import { ComparisonMatrix } from '../src/ComparisonMatrix';
 import { DrillsPanel } from '../src/DrillsPanel';
 import { ExamplesPanel } from '../src/ExamplesPanel';
 import { GlossaryPanel } from '../src/GlossaryPanel';
@@ -14,9 +15,12 @@ import { RecoveryWorkflow } from '../src/RecoveryWorkflow';
 import { RelatedBlueprints } from '../src/RelatedBlueprints';
 import { RunbookPanel } from '../src/RunbookPanel';
 import { SecurityWarnings } from '../src/SecurityWarnings';
+import { ThresholdCalculator } from '../src/ThresholdCalculator';
+import { downloadTextFile } from '../src/download';
 import { analyzeSocialRecovery, scoreBackupPosture } from '../src/engines';
 import { exportPlanJson } from '../src/exportPlan';
 import type { PostureHints } from '../src/live/getAccount';
+import { generateRunbookMarkdown } from '../src/runbook';
 import {
   buildShareSearchParam,
   decodeShareState,
@@ -87,6 +91,8 @@ export default function SocialRecoveryPage() {
   const risks = useMemo(() => analyzeSocialRecovery(policy), [policy]);
   const highCount = risks.filter((r) => r.level === 'high').length;
 
+  const acct = accountLabel.trim() || 'account';
+
   const copyShare = async () => {
     const param = buildShareSearchParam({ posture, policy });
     const url =
@@ -103,13 +109,29 @@ export default function SocialRecoveryPage() {
 
   const copyJson = async () => {
     try {
-      await navigator.clipboard.writeText(
-        exportPlanJson(accountLabel.trim() || 'account', posture, policy)
-      );
+      await navigator.clipboard.writeText(exportPlanJson(acct, posture, policy));
       setMessage('Plan JSON copied');
     } catch {
       setMessage('Clipboard unavailable');
     }
+  };
+
+  const downloadJson = () => {
+    downloadTextFile(
+      `${acct}-recovery-plan.json`,
+      exportPlanJson(acct, posture, policy),
+      'application/json'
+    );
+    setMessage('Plan JSON downloaded');
+  };
+
+  const downloadRunbook = () => {
+    downloadTextFile(
+      `${acct}-runbook.md`,
+      generateRunbookMarkdown({ accountName: acct, posture, policy }),
+      'text/markdown;charset=utf-8'
+    );
+    setMessage('Runbook downloaded');
   };
 
   return (
@@ -123,7 +145,7 @@ export default function SocialRecoveryPage() {
             SOCIAL RECOVERY & KEY BACKUP
           </h1>
           <p className="text-sm opacity-60 mt-2 max-w-xl">
-            Weighted on-chain recovery · offline backups · drills · myths · glossary
+            Weighted recovery · threshold math · scenarios · offline exports
           </p>
         </header>
 
@@ -140,6 +162,8 @@ export default function SocialRecoveryPage() {
 
         <MythsPanel />
 
+        <ComparisonMatrix />
+
         <ExamplesPanel
           onApply={(p, pol) => {
             setPosture(p);
@@ -149,6 +173,8 @@ export default function SocialRecoveryPage() {
         />
 
         <AuthorityModelsPanel />
+
+        <ThresholdCalculator />
 
         <HybridSketchPanel />
 
@@ -209,6 +235,20 @@ export default function SocialRecoveryPage() {
               onClick={() => void copyJson()}
             >
               Copy plan JSON
+            </button>
+            <button
+              type="button"
+              className="px-3 py-2 rounded-lg text-sm bg-sky-900"
+              onClick={downloadJson}
+            >
+              Download JSON
+            </button>
+            <button
+              type="button"
+              className="px-3 py-2 rounded-lg text-sm bg-teal-800"
+              onClick={downloadRunbook}
+            >
+              Download runbook.md
             </button>
             <button
               type="button"
@@ -374,7 +414,7 @@ export default function SocialRecoveryPage() {
           </p>
         )}
 
-        <p className="text-xs opacity-50">Passes 1–11 · educational-reference</p>
+        <p className="text-xs opacity-50">Passes 1–12 · educational-reference</p>
       </div>
     </div>
   );

@@ -7,4 +7,11 @@ export { RECOVERY_MYTHS } from "./myths";
 export { GLOSSARY } from "./glossary";
 export { sketchHybridOwner, hybridFeasibility } from "./hybridSketch";
 export { exportPlanJson } from "./exportPlan";
+export {
+  analyzeWeightDesign,
+  canReachThreshold,
+  minimalQuorumSizes,
+  totalWeight,
+} from "./thresholdMath";
+export { APPROACH_MATRIX } from "./comparison";
 export type { BackupPosture, SocialRecoveryPolicy, RecoveryRisk } from "./types";

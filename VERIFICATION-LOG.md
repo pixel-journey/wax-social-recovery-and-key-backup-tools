@@ -1,9 +1,9 @@
 # Verification Log
 
-**Updated:** 2026-10-26 (Pass 11)
+**Updated:** 2026-10-26 (Pass 12)
 
 | Claim | Status |
 | --- | --- |
-| myths / hybrid / export | unit |
-| Live authority broadcast | out of scope |
+| thresholdMath / scenarios | unit |
+| Downloads | browser UI |
 | CI | test + typecheck + build |

@@ -14,7 +14,9 @@ export type ExamplesPanelProps = {
 };
 
 export function ExamplesPanel({ onApply }: ExamplesPanelProps) {
-  const [selected, setSelected] = useState<ScenarioExample>(SCENARIO_CATALOG[2]);
+  const [selected, setSelected] = useState<ScenarioExample>(
+    SCENARIO_CATALOG.find((s) => s.id === '2-of-3-friends') ?? SCENARIO_CATALOG[0]
+  );
   const [account, setAccount] = useState('alice.wam');
   const [h1, setH1] = useState('bob.wam');
   const [h2, setH2] = useState('carol.wam');
@@ -30,8 +32,8 @@ export function ExamplesPanel({ onApply }: ExamplesPanelProps) {
     <section className="rounded-2xl border border-cyan-500/30 bg-cyan-500/10 p-5 space-y-4">
       <h3 className="font-semibold text-cyan-100">Worked examples</h3>
       <p className="text-xs opacity-70">
-        Load a scenario into the checklists, or inspect a conceptual 2-of-3{' '}
-        <code>updateauth</code> sketch (not broadcast from this page).
+        {SCENARIO_CATALOG.length} scenarios — apply to checklists or inspect a 2-of-3{' '}
+        <code>updateauth</code> sketch.
       </p>
 
       <div className="flex flex-wrap gap-2">
@@ -82,19 +84,16 @@ export function ExamplesPanel({ onApply }: ExamplesPanelProps) {
               className="bg-black/50 border border-white/10 rounded px-2 py-1 font-mono"
               value={h1}
               onChange={(e) => setH1(e.target.value)}
-              placeholder="helper1"
             />
             <input
               className="bg-black/50 border border-white/10 rounded px-2 py-1 font-mono"
               value={h2}
               onChange={(e) => setH2(e.target.value)}
-              placeholder="helper2"
             />
             <input
               className="bg-black/50 border border-white/10 rounded px-2 py-1 font-mono"
               value={h3}
               onChange={(e) => setH3(e.target.value)}
-              placeholder="helper3"
             />
           </div>
           <pre className="overflow-x-auto text-[10px] opacity-80 whitespace-pre-wrap">

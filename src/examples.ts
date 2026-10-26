@@ -1,6 +1,5 @@
 /**
  * Worked educational examples for backup + social recovery on Antelope/WAX.
- * Sketches only — do not broadcast from this module.
  */
 
 import type { BackupPosture, SocialRecoveryPolicy } from "./types";
@@ -10,7 +9,10 @@ export type ScenarioId =
   | "hw-plus-paper"
   | "2-of-3-friends"
   | "family-anti-pattern"
-  | "dao-treasury-style";
+  | "dao-treasury-style"
+  | "lost-phone-active"
+  | "inheritance-2-of-3"
+  | "exchange-hot-cold";
 
 export interface ScenarioExample {
   id: ScenarioId;
@@ -18,7 +20,6 @@ export interface ScenarioExample {
   summary: string;
   posture: BackupPosture;
   policy: SocialRecoveryPolicy;
-  /** What "good" looks like on-chain in plain language */
   onChainShape: string;
   warnings: string[];
 }
@@ -42,7 +43,7 @@ export const SCENARIO_CATALOG: ScenarioExample[] = [
       usesMultisigWeights: false,
     },
     onChainShape:
-      "owner = single cold key (paper/hardware). active = hot key for daily. No second party can recover owner.",
+      "owner = single cold key. active = hot key for daily. No second party can recover owner.",
     warnings: [
       "Device + both paper copies lost → account unrecoverable",
       "Add multi-party owner only after you understand threshold math",
@@ -66,7 +67,7 @@ export const SCENARIO_CATALOG: ScenarioExample[] = [
       usesMultisigWeights: false,
     },
     onChainShape:
-      "owner keys[0] = hardware pubkey. active = separate software key. See hardware-patterns blueprint.",
+      "owner keys[0] = hardware pubkey. active = separate software key.",
     warnings: [
       "Still single-party owner — social layer optional next",
       "Never type the seed into a website",
@@ -90,17 +91,17 @@ export const SCENARIO_CATALOG: ScenarioExample[] = [
       usesMultisigWeights: true,
     },
     onChainShape:
-      "owner auth: threshold 2; accounts: friend1@active w=1, friend2@active w=1, friend3@active w=1 (or their keys). You may keep your own key with weight 1 as well.",
+      "owner auth: threshold 2; accounts: friend1@active w=1, friend2@active w=1, friend3@active w=1.",
     warnings: [
       "Collusion of any 2 helpers can change owner",
-      "Document who signs propose/approve if using eosio.msig instead",
+      "Document who signs if using eosio.msig",
     ],
   },
   {
     id: "family-anti-pattern",
     title: "Anti-pattern: one relative has the seed",
     summary:
-      "Common failure: email or paper seed shared with one family member who can act alone.",
+      "Common failure: seed shared with one family member who can act alone.",
     posture: {
       offlineCopies: 1,
       restoreDrilled: false,
@@ -114,18 +115,17 @@ export const SCENARIO_CATALOG: ScenarioExample[] = [
       usesMultisigWeights: false,
     },
     onChainShape:
-      "Effectively single key / single helper with full control — looks like recovery, behaves like shared custody.",
+      "Effectively single key / single helper with full control — shared custody, not multi-party security.",
     warnings: [
       "High risk: helperCount 1 + threshold 1",
       "High risk: helpersHoldFullSeeds",
-      "Prefer weights so one relative cannot move owner alone",
     ],
   },
   {
     id: "dao-treasury-style",
     title: "Small treasury: 3-of-5",
     summary:
-      "Ops team accounts as weighted owner authorities. Daily spends on active or spending permission.",
+      "Ops team accounts as weighted owner. Daily spends on active or spending permission.",
     posture: {
       offlineCopies: 3,
       restoreDrilled: true,
@@ -139,15 +139,86 @@ export const SCENARIO_CATALOG: ScenarioExample[] = [
       usesMultisigWeights: true,
     },
     onChainShape:
-      "owner threshold 3 among 5 council accounts; active used for routine transfers with lower risk keys. Multi-sig propose/approve/exec for owner changes.",
+      "owner threshold 3 among 5 council accounts; active for routine transfers.",
     warnings: [
-      "Quorum availability (travel, burnout) can block recovery",
-      "Pair with multi-sig blueprint for propose flows",
+      "Quorum availability can block recovery",
+      "Pair with multi-sig blueprint",
+    ],
+  },
+  {
+    id: "lost-phone-active",
+    title: "Incident: phone (active) lost",
+    summary:
+      "Owner still safe offline. Policy focuses on remediation speed, not social owner yet.",
+    posture: {
+      offlineCopies: 2,
+      restoreDrilled: true,
+      ownerSeparatedFromDaily: true,
+      writtenRunbook: true,
+    },
+    policy: {
+      helperCount: 0,
+      threshold: 1,
+      helpersHoldFullSeeds: false,
+      usesMultisigWeights: false,
+    },
+    onChainShape:
+      "From owner: updateauth active → new key; revoke old; rotate session permissions.",
+    warnings: [
+      "If owner was on the same phone, this becomes an owner-loss incident",
+      "Drill this path before it is real",
+    ],
+  },
+  {
+    id: "inheritance-2-of-3",
+    title: "Inheritance-style 2-of-3",
+    summary:
+      "You + lawyer/executor account + family account; threshold 2. Legal process is off-chain; weights are on-chain.",
+    posture: {
+      offlineCopies: 2,
+      restoreDrilled: true,
+      ownerSeparatedFromDaily: true,
+      writtenRunbook: true,
+    },
+    policy: {
+      helperCount: 3,
+      threshold: 2,
+      helpersHoldFullSeeds: false,
+      usesMultisigWeights: true,
+    },
+    onChainShape:
+      "owner: you@key w=1, executor@active w=1, family@active w=1; threshold 2. Not legal advice.",
+    warnings: [
+      "On-chain design ≠ estate law — coordinate with counsel offline",
+      "Executor must understand Antelope signing",
+    ],
+  },
+  {
+    id: "exchange-hot-cold",
+    title: "Project: hot ops + cold owner",
+    summary:
+      "Hot active for bots/ops; cold multi-sig owner for upgrades and rescues.",
+    posture: {
+      offlineCopies: 3,
+      restoreDrilled: true,
+      ownerSeparatedFromDaily: true,
+      writtenRunbook: true,
+    },
+    policy: {
+      helperCount: 4,
+      threshold: 3,
+      helpersHoldFullSeeds: false,
+      usesMultisigWeights: true,
+    },
+    onChainShape:
+      "active: ops keys; owner: 3-of-4 core team account-auth or msig for updateauth.",
+    warnings: [
+      "Hot key compromise should not imply owner compromise",
+      "Document who holds each owner weight",
     ],
   },
 ];
 
-/** Conceptual owner authority for a 2-of-3 account-auth design. */
 export function sketchOwnerAuth2of3(helpers: [string, string, string]) {
   return {
     threshold: 2,
@@ -160,7 +231,6 @@ export function sketchOwnerAuth2of3(helpers: [string, string, string]) {
   };
 }
 
-/** Educational updateauth data blob (not for blind broadcast). */
 export function sketchUpdateOwnerFor2of3(
   account: string,
   helpers: [string, string, string]
@@ -175,11 +245,11 @@ export function sketchUpdateOwnerFor2of3(
       parent: "",
       auth: sketchOwnerAuth2of3(helpers),
     },
-    note: "Requires current owner to sign. Test on a throwaway account. Prefer WharfKit session.transact.",
+    note: "Requires current owner to sign. Test on throwaway. Prefer WharfKit.",
   };
 }
 
 export const CLOUD_WALLET_NOTE = `
-Cloud Wallet product recovery (email / device re-link) only restores keys that product controls.
+Cloud Wallet product recovery only restores keys that product controls.
 It does not redesign on-chain owner weights. Treat it as one backup path, never the only one.
 `.trim();

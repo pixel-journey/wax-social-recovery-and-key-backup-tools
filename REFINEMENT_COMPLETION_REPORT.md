@@ -1,9 +1,9 @@
-# Through Pass 11
+# Through Pass 12
 
 | Pass | Scope |
 |------|--------|
-| 10 | Authority models, drills |
-| **11** | Myths Q&A, glossary, hybrid sketch + feasibility, plan JSON export, `src/index.ts` |
+| 11 | Myths, glossary, hybrid, JSON |
+| **12** | Threshold calculator, +3 scenarios, comparison matrix, file downloads |
 
 ```bash
 npm install && npm test && npm run build
