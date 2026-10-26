@@ -1,12 +1,9 @@
-# Social recovery — through Pass 8
+# Social recovery through Pass 9
 
 | Pass | Scope |
 |------|--------|
-| 1–4 | Core UI + live get_account |
-| 5 | EDUCATION primer |
-| **6–8** | Share URL, drafts, Antelope UI copy, CI build, Tailwind |
-
-Near security-cluster parity. Optional next: WharfKit note block only (no live authority writes in this repo).
+| 5–8 | Education, share, CI, Tailwind |
+| **9** | Scenario catalog, ExamplesPanel, 2-of-3 updateauth sketch |
 
 ```bash
 npm install && npm test && npm run build

@@ -1,56 +1,27 @@
 # What this repo is about (WAX / Antelope)
 
-You are **not** mostly wrong — the everyday meanings (Cloud Wallet “forgot password”, paper wallets, key backups) are *related* — but on Antelope the durable story is **account permissions**, not a single seed inside a product UI.
+## Short answer
 
-## How recovery actually works here
+**Social recovery** here means designing **who can restore control of an Antelope account** using **weighted keys/accounts on `owner` (or a recovery permission)** — M-of-N — **without** giving any one helper your full seed.
 
-On WAX/Antelope an **account** is controlled by **permissions** (`owner`, `active`, custom). Each permission has a **threshold** and **keys and/or other accounts** with weights.
+**Key backup** means offline copies, restore drills, and separating `owner` from daily `active`.
 
-| Idea people say | What it maps to on-chain |
-|-----------------|--------------------------|
-| “I backed up my key” | You control a private key that still meets `owner` (or `active`) weight |
-| “Social recovery” | **Other people/accounts** hold **weighted keys or account authorities** on *your* `owner` (or a recovery permission) so **M-of-N** can `updateauth` if you lose a device |
-| “Forgot password” (Cloud Wallet) | **Custodial / product recovery** for that wallet’s key material — **not** the same as on-chain multi-party authority |
-| Paper / hardware wallet | Offline storage of a key that is registered on-chain under a permission |
-| Multi-sig recovery | Same family: `eosio.msig` *or* multi-key `owner` — see multi-sig + hardware blueprints |
+Cloud Wallet “forgot password” is a **product** recovery path. Useful as *one* path; **not** a substitute for on-chain authority design.
 
-### Social recovery (this repo’s sense)
+## Worked scenarios (in the app)
 
-**Social recovery** ≈ designing **who can help restore control** without handing them a full seed:
+| Id | Intent |
+|----|--------|
+| solo-paper | Two offline copies, no helpers |
+| hw-plus-paper | Hardware owner + paper |
+| 2-of-3-friends | Weighted friends (preferred social pattern) |
+| family-anti-pattern | One relative holds full seed (flagged) |
+| dao-treasury-style | 3-of-5 ops council |
 
-- Prefer **weighted authorities** (friends’ accounts or keys with weights below full threshold alone).
-- **Flag as high risk:** one “helper” who alone can change `owner`.
-- **Never** teach “email your seed to three friends.”
-- Offline **runbooks** so recovery still works if a website disappears (PX §11).
-
-### Key backup (this repo’s sense)
-
-**Backup posture** = checklists and scores for:
-
-- Separate `owner` vs `active` usage
-- Second path if one device dies (another key, hardware, multi-sig, trusted parties with *partial* weight)
-- No single SaaS as the only recovery path
-
-### What this repo is **not**
-
-- Not Cloud Wallet’s internal password-reset product
-- Not a custody service
-- Not a place to paste private keys or seeds
-- Not a full msig proposer (see `wax-multi-sig-proposal-builder-and-simulator`)
-- Not hardware firmware (see `wax-hardware-wallet-integration-patterns`)
-
-## Stack for builders
-
-1. **Backups first** — keys you control, offline, tested restore on a throwaway account.  
-2. **Authority design** — `owner` rare; limited session keys for dApps.  
-3. **Social / multi-party** — only with thresholds so no single helper has full control.  
-4. **WharfKit** for signing when you *do* change authority — never eosjs greenfield.
+Each applies checklist values and explains the **on-chain shape**. A 2-of-3 `updateauth` **sketch** is included for learning; broadcast via WharfKit on a throwaway account only after you understand it (see multi-sig blueprint).
 
 ## Related blueprints
 
-| Repo | Role |
-|------|------|
-| This one | Backup posture, social-recovery *risk*, runbooks, read-only permission view |
-| multi-sig builder | Propose/approve/exec recovery txs |
-| hardware patterns | Device isolation, rotation drill |
-| session keys | Limited dApp permissions so `owner` stays cold |
+- multi-sig proposal builder — propose/approve/exec  
+- hardware wallet patterns — device isolation  
+- session keys — limited dApp permissions  

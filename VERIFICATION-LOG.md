@@ -1,9 +1,9 @@
 # Verification Log
 
-**Updated:** 2026-10-26 (Pass 8)
+**Updated:** 2026-10-26 (Pass 9)
 
 | Claim | Status |
 | --- | --- |
-| Engines / share | unit |
-| Live get_account | soft-fail UI |
+| Scenario risks | examples.test.ts |
+| updateauth sketch shape | examples.test.ts |
 | CI | test + typecheck + build |

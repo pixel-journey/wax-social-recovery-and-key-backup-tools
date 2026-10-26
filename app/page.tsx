@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { BackupChecklist } from '../src/BackupChecklist';
+import { ExamplesPanel } from '../src/ExamplesPanel';
 import { OwnerActivePrimer } from '../src/OwnerActivePrimer';
 import { PermissionSummaryPanel } from '../src/PermissionSummaryPanel';
 import { RecoveryWorkflow } from '../src/RecoveryWorkflow';
@@ -104,9 +105,8 @@ export default function SocialRecoveryPage() {
             SOCIAL RECOVERY & KEY BACKUP
           </h1>
           <p className="text-sm opacity-60 mt-2 max-w-xl">
-            On Antelope, social recovery means <strong>weighted authorities</strong>{' '}
-            on your account — not Cloud Wallet password reset, and not sharing full
-            seeds. See EDUCATION.md.
+            Weighted authorities on Antelope — not Cloud Wallet password reset, not
+            full-seed sharing. Worked examples below.
           </p>
         </header>
 
@@ -116,13 +116,19 @@ export default function SocialRecoveryPage() {
         >
           <p className="font-medium text-sm">Product recovery ≠ on-chain recovery</p>
           <p>
-            Cloud Wallet “forgot password” is a <em>wallet product</em> path. This
-            tool is about <em>account permissions</em>: offline key backups,{' '}
-            <code className="text-amber-50">owner</code>/<code className="text-amber-50">active</code>{' '}
-            separation, and M-of-N helpers who do <strong>not</strong> each hold your
-            whole seed.
+            Cloud Wallet “forgot password” is a wallet product path. This tool is
+            about account permissions: offline backups, owner/active separation, and
+            M-of-N helpers who do not each hold your whole seed.
           </p>
         </section>
+
+        <ExamplesPanel
+          onApply={(p, pol) => {
+            setPosture(p);
+            setPolicy(pol);
+            setMessage('Example applied to checklists');
+          }}
+        />
 
         <OwnerActivePrimer />
 
@@ -190,7 +196,7 @@ export default function SocialRecoveryPage() {
 
           <div>
             <label className="block text-xs opacity-70" htmlFor="offline-copies">
-              Offline key copies (paper / hardware / air-gapped): {posture.offlineCopies}
+              Offline key copies: {posture.offlineCopies}
             </label>
             <input
               id="offline-copies"
@@ -242,12 +248,6 @@ export default function SocialRecoveryPage() {
               high flags: {highCount}
             </p>
           </div>
-
-          <p className="text-[11px] opacity-60">
-            Helpers = other keys or accounts on your <code>owner</code> (or recovery)
-            permission. Threshold = minimum weight to change authority. Prefer
-            multi-sig weights over full-seed sharing.
-          </p>
 
           <div>
             <label className="block text-xs opacity-70" htmlFor="helpers">
@@ -332,9 +332,7 @@ export default function SocialRecoveryPage() {
           </p>
         )}
 
-        <p className="text-xs opacity-50">
-          Passes 5–8 · educational-reference · never paste keys
-        </p>
+        <p className="text-xs opacity-50">Passes 5–9 · never paste keys</p>
       </div>
     </div>
   );
