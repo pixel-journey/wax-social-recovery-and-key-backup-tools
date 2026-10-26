@@ -1,3 +1,27 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  .print\\:hidden,
+  button,
+  input[type='range'],
+  nav {
+    /* range inputs already toggled via utility where needed */
+  }
+
+  a {
+    text-decoration: underline;
+  }
+
+  section {
+    break-inside: avoid;
+    border-color: #ccc !important;
+    background: transparent !important;
+  }
+}

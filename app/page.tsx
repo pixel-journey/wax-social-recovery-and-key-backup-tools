@@ -3,7 +3,6 @@
 import React, { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { AuthorityModelsPanel } from '../src/AuthorityModelsPanel';
 import { BackupChecklist } from '../src/BackupChecklist';
-import { CollusionPanel } from '../src/CollusionPanel';
 import { ComparisonMatrix } from '../src/ComparisonMatrix';
 import { DrillsPanel } from '../src/DrillsPanel';
 import { ExamplesPanel } from '../src/ExamplesPanel';
@@ -18,7 +17,7 @@ import { RecoveryWorkflow } from '../src/RecoveryWorkflow';
 import { RelatedBlueprints } from '../src/RelatedBlueprints';
 import { RunbookPanel } from '../src/RunbookPanel';
 import { SecurityWarnings } from '../src/SecurityWarnings';
-import { ThresholdCalculator } from '../src/ThresholdCalculator';
+import { WeightLab } from '../src/WeightLab';
 import { downloadTextFile } from '../src/download';
 import { analyzeSocialRecovery, scoreBackupPosture } from '../src/engines';
 import { exportPlanJson } from '../src/exportPlan';
@@ -127,7 +126,7 @@ export default function SocialRecoveryPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white p-6">
       <div className="max-w-3xl mx-auto space-y-8">
-        <header>
+        <header className="print:mb-4">
           <p className="text-xs uppercase tracking-widest text-emerald-400/80">
             Pixel Journey · Security
           </p>
@@ -135,8 +134,15 @@ export default function SocialRecoveryPage() {
             SOCIAL RECOVERY & KEY BACKUP
           </h1>
           <p className="text-sm opacity-60 mt-2 max-w-xl">
-            Design · measure collusion · recommend · respond to incidents
+            Design · collusion math · recommend · drill · incident response
           </p>
+          <button
+            type="button"
+            className="mt-3 px-3 py-1.5 rounded-lg text-xs bg-white/10 print:hidden"
+            onClick={() => window.print()}
+          >
+            Print / save PDF
+          </button>
         </header>
 
         <section
@@ -164,9 +170,7 @@ export default function SocialRecoveryPage() {
 
         <AuthorityModelsPanel />
 
-        <ThresholdCalculator />
-
-        <CollusionPanel />
+        <WeightLab />
 
         <HybridSketchPanel />
 
@@ -213,7 +217,7 @@ export default function SocialRecoveryPage() {
             />
           </label>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 print:hidden">
             <button type="button" className="px-3 py-2 rounded-lg text-sm bg-emerald-800" onClick={() => void copyShare()}>
               Copy share URL
             </button>
@@ -279,7 +283,7 @@ export default function SocialRecoveryPage() {
               onChange={(e) =>
                 setPosture((p) => ({ ...p, offlineCopies: Number(e.target.value) }))
               }
-              className="w-full mt-1"
+              className="w-full mt-1 print:hidden"
             />
           </div>
 
@@ -329,7 +333,7 @@ export default function SocialRecoveryPage() {
               onChange={(e) =>
                 setPolicy((p) => ({ ...p, helperCount: Number(e.target.value) }))
               }
-              className="w-full mt-1"
+              className="w-full mt-1 print:hidden"
             />
           </div>
 
@@ -346,7 +350,7 @@ export default function SocialRecoveryPage() {
               onChange={(e) =>
                 setPolicy((p) => ({ ...p, threshold: Number(e.target.value) }))
               }
-              className="w-full mt-1"
+              className="w-full mt-1 print:hidden"
             />
           </div>
 
@@ -388,12 +392,12 @@ export default function SocialRecoveryPage() {
         <RelatedBlueprints />
 
         {message && (
-          <p className="text-xs text-emerald-200/80" role="status">
+          <p className="text-xs text-emerald-200/80 print:hidden" role="status">
             {message}
           </p>
         )}
 
-        <p className="text-xs opacity-50">Passes 1–13 · educational-reference</p>
+        <p className="text-xs opacity-50">Passes 1–14 · educational-reference · frozen for scope</p>
       </div>
     </div>
   );
