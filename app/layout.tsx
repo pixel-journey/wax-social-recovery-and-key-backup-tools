@@ -1,17 +1,16 @@
-import { Cases } from "../src/Cases";
 import type { ReactNode } from "react";
+import "./globals.css";
 
 export const metadata = {
-  title: "Social Recovery & Key Backup · Pixel Journey",
+  title: "Social recovery & key backup · Pixel Journey",
   description:
-    "Educational backup posture and social recovery risk tools for WAX/Antelope",
+    "Educational backup posture and on-chain social recovery design for WAX",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body className="bg-black text-white antialiased">{children}
-        <Cases /></body>
+      <body className="bg-[#0a0a0a] text-white antialiased">{children}</body>
     </html>
   );
 }

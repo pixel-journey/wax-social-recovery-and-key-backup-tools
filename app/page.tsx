@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useId, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { BackupChecklist } from '../src/BackupChecklist';
 import { OwnerActivePrimer } from '../src/OwnerActivePrimer';
 import { PermissionSummaryPanel } from '../src/PermissionSummaryPanel';
@@ -10,6 +10,11 @@ import { RunbookPanel } from '../src/RunbookPanel';
 import { SecurityWarnings } from '../src/SecurityWarnings';
 import { analyzeSocialRecovery, scoreBackupPosture } from '../src/engines';
 import type { PostureHints } from '../src/live/getAccount';
+import {
+  buildShareSearchParam,
+  decodeShareState,
+} from '../src/shareState';
+import { clearState, loadState, saveState } from '../src/stateStorage';
 import type { BackupPosture, SocialRecoveryPolicy } from '../src/types';
 
 export default function SocialRecoveryPage() {
@@ -31,6 +36,29 @@ export default function SocialRecoveryPage() {
   });
 
   const [liveHint, setLiveHint] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const q = new URLSearchParams(window.location.search).get('sr');
+      if (q) {
+        const shared = decodeShareState(q);
+        if (shared) {
+          setPosture(shared.posture);
+          setPolicy(shared.policy);
+          setMessage('Loaded plan from share URL');
+          window.history.replaceState({}, '', window.location.pathname);
+          return;
+        }
+      }
+    }
+    const loaded = loadState();
+    if (loaded.ok && loaded.value) {
+      setPosture(loaded.value.posture);
+      setPolicy(loaded.value.policy);
+      setMessage('Restored draft from localStorage');
+    }
+  }, []);
 
   const onLiveView = useCallback((_view: unknown, hints: PostureHints) => {
     setLiveHint(hints.reason);
@@ -41,10 +69,8 @@ export default function SocialRecoveryPage() {
     setPolicy((pol) => ({
       ...pol,
       usesMultisigWeights: hints.usesMultisigWeights,
-      helperCount:
-        hints.suggestedHelperCount ?? pol.helperCount,
+      helperCount: hints.suggestedHelperCount ?? pol.helperCount,
       threshold: hints.suggestedThreshold ?? pol.threshold,
-      // Live structure never implies seed-sharing
       helpersHoldFullSeeds: false,
     }));
   }, []);
@@ -52,6 +78,20 @@ export default function SocialRecoveryPage() {
   const backupScore = useMemo(() => scoreBackupPosture(posture), [posture]);
   const risks = useMemo(() => analyzeSocialRecovery(policy), [policy]);
   const highCount = risks.filter((r) => r.level === 'high').length;
+
+  const copyShare = async () => {
+    const param = buildShareSearchParam({ posture, policy });
+    const url =
+      typeof window !== 'undefined'
+        ? `${window.location.origin}${window.location.pathname}?${param}`
+        : `?${param}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setMessage('Share URL copied');
+    } catch {
+      setMessage('Clipboard unavailable');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white p-6">
@@ -64,10 +104,25 @@ export default function SocialRecoveryPage() {
             SOCIAL RECOVERY & KEY BACKUP
           </h1>
           <p className="text-sm opacity-60 mt-2 max-w-xl">
-            Live public permissions, posture scoring, offline runbooks. Educational
-            only — not custody advice.
+            On Antelope, social recovery means <strong>weighted authorities</strong>{' '}
+            on your account — not Cloud Wallet password reset, and not sharing full
+            seeds. See EDUCATION.md.
           </p>
         </header>
+
+        <section
+          className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-xs text-amber-100/90 space-y-2"
+          role="note"
+        >
+          <p className="font-medium text-sm">Product recovery ≠ on-chain recovery</p>
+          <p>
+            Cloud Wallet “forgot password” is a <em>wallet product</em> path. This
+            tool is about <em>account permissions</em>: offline key backups,{' '}
+            <code className="text-amber-50">owner</code>/<code className="text-amber-50">active</code>{' '}
+            separation, and M-of-N helpers who do <strong>not</strong> each hold your
+            whole seed.
+          </p>
+        </section>
 
         <OwnerActivePrimer />
 
@@ -103,9 +158,39 @@ export default function SocialRecoveryPage() {
             </p>
           </div>
 
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              className="px-3 py-2 rounded-lg text-sm bg-emerald-800"
+              onClick={() => void copyShare()}
+            >
+              Copy share URL
+            </button>
+            <button
+              type="button"
+              className="px-3 py-2 rounded-lg text-sm bg-violet-700"
+              onClick={() => {
+                const r = saveState({ posture, policy });
+                setMessage(r.ok ? 'Draft saved' : r.reason ?? 'save failed');
+              }}
+            >
+              Save draft
+            </button>
+            <button
+              type="button"
+              className="px-3 py-2 rounded-lg text-sm bg-white/10"
+              onClick={() => {
+                clearState();
+                setMessage('Draft cleared');
+              }}
+            >
+              Clear draft
+            </button>
+          </div>
+
           <div>
             <label className="block text-xs opacity-70" htmlFor="offline-copies">
-              Offline copies: {posture.offlineCopies}
+              Offline key copies (paper / hardware / air-gapped): {posture.offlineCopies}
             </label>
             <input
               id="offline-copies"
@@ -113,25 +198,21 @@ export default function SocialRecoveryPage() {
               min={0}
               max={5}
               value={posture.offlineCopies}
-              aria-valuemin={0}
-              aria-valuemax={5}
-              aria-valuenow={posture.offlineCopies}
-              aria-describedby={scoreId}
               onChange={(e) =>
                 setPosture((p) => ({
                   ...p,
                   offlineCopies: Number(e.target.value),
                 }))
               }
-              className="w-full mt-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+              className="w-full mt-1"
             />
           </div>
 
           {(
             [
-              ['restoreDrilled', 'Restore drill completed'],
-              ['ownerSeparatedFromDaily', 'Owner separated from daily key'],
-              ['writtenRunbook', 'Written runbook (not only a website)'],
+              ['restoreDrilled', 'Restore drill on a throwaway account'],
+              ['ownerSeparatedFromDaily', 'Owner key ≠ daily active/hot key'],
+              ['writtenRunbook', 'Written runbook outside a single website'],
             ] as const
           ).map(([key, label]) => (
             <label key={key} className="flex items-center gap-2 text-sm">
@@ -141,7 +222,6 @@ export default function SocialRecoveryPage() {
                 onChange={(e) =>
                   setPosture((p) => ({ ...p, [key]: e.target.checked }))
                 }
-                className="focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
               />
               {label}
             </label>
@@ -156,16 +236,22 @@ export default function SocialRecoveryPage() {
         >
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h2 id="policy-heading" className="text-sm font-semibold text-amber-200/90">
-              Social recovery policy
+              Social recovery policy (on-chain weights)
             </h2>
             <p className="text-xs font-mono opacity-70" id={highId} aria-live="polite">
               high flags: {highCount}
             </p>
           </div>
 
+          <p className="text-[11px] opacity-60">
+            Helpers = other keys or accounts on your <code>owner</code> (or recovery)
+            permission. Threshold = minimum weight to change authority. Prefer
+            multi-sig weights over full-seed sharing.
+          </p>
+
           <div>
             <label className="block text-xs opacity-70" htmlFor="helpers">
-              Helpers: {policy.helperCount}
+              Helpers (N): {policy.helperCount}
             </label>
             <input
               id="helpers"
@@ -173,22 +259,19 @@ export default function SocialRecoveryPage() {
               min={0}
               max={7}
               value={policy.helperCount}
-              aria-valuemin={0}
-              aria-valuemax={7}
-              aria-valuenow={policy.helperCount}
               onChange={(e) =>
                 setPolicy((p) => ({
                   ...p,
                   helperCount: Number(e.target.value),
                 }))
               }
-              className="w-full mt-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+              className="w-full mt-1"
             />
           </div>
 
           <div>
             <label className="block text-xs opacity-70" htmlFor="threshold">
-              Threshold (M of N): {policy.threshold}
+              Threshold M of N: {policy.threshold}
             </label>
             <input
               id="threshold"
@@ -196,17 +279,13 @@ export default function SocialRecoveryPage() {
               min={1}
               max={7}
               value={policy.threshold}
-              aria-valuemin={1}
-              aria-valuemax={7}
-              aria-valuenow={policy.threshold}
-              aria-describedby={highId}
               onChange={(e) =>
                 setPolicy((p) => ({
                   ...p,
                   threshold: Number(e.target.value),
                 }))
               }
-              className="w-full mt-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+              className="w-full mt-1"
             />
           </div>
 
@@ -220,7 +299,6 @@ export default function SocialRecoveryPage() {
                   helpersHoldFullSeeds: e.target.checked,
                 }))
               }
-              className="focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
             />
             Helpers hold full seeds (anti-pattern)
           </label>
@@ -235,9 +313,8 @@ export default function SocialRecoveryPage() {
                   usesMultisigWeights: e.target.checked,
                 }))
               }
-              className="focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
             />
-            Uses multi-sig / weighted permissions
+            Uses multi-sig / weighted permissions (preferred)
           </label>
 
           <SecurityWarnings policy={policy} />
@@ -249,10 +326,14 @@ export default function SocialRecoveryPage() {
 
         <RelatedBlueprints />
 
+        {message && (
+          <p className="text-xs text-emerald-200/80" role="status">
+            {message}
+          </p>
+        )}
+
         <p className="text-xs opacity-50">
-          <code className="text-emerald-400/80">fetchAccountPermissions</code> ·{' '}
-          <code className="text-emerald-400/80">derivePostureHints</code> ·{' '}
-          <code className="text-emerald-400/80">generateRunbookMarkdown</code>
+          Passes 5–8 · educational-reference · never paste keys
         </p>
       </div>
     </div>
