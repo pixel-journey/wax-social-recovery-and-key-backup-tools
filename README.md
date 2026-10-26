@@ -1,42 +1,24 @@
 # wax-social-recovery-and-key-backup-tools
 
-> **Trust Label:** `educational-reference`  
-> **Verification:** [VERIFICATION-LOG.md](VERIFICATION-LOG.md)  
-> **Status:** ✅ Pass 4 complete  
-> **Parent Catalog:** [wax-ecosystem-blueprint-catalog](https://github.com/pixel-journey/wax-ecosystem-blueprint-catalog)
+> **Trust label:** `educational-reference`  
+> **Status:** Passes **1–4** + **Pass 5** education primer (2026-10-26)
 
-Educational **backup posture**, **social recovery risk** analysis, **offline runbooks**, and **live public** `get_account` inspection for WAX/Antelope.
+On **WAX/Antelope**, “social recovery” means **multi-party authority design** (weighted keys/accounts on `owner` / recovery permissions) — **not** emailing seeds, and **not** the same as Cloud Wallet’s product “forgot password.”
 
-## Quick start
+This repo teaches **backup posture**, **social-recovery risk flags**, **offline runbooks**, and **read-only** `get_account` inspection.
 
 ```bash
 npm install && npm test && npm run dev
 ```
 
-```ts
-import { fetchAccountPermissions, derivePostureHints } from "./src/live/getAccount";
-
-const view = await fetchAccountPermissions("eosio");
-const hints = derivePostureHints(view);
-```
-
-## What you get
+**Start here:** [EDUCATION.md](./EDUCATION.md) · [POLICY.md](./POLICY.md)
 
 | Layer | Features |
 |-------|----------|
-| Pure engines | `scoreBackupPosture`, `analyzeSocialRecovery`, `generateRunbookMarkdown` |
-| Live (read-only) | Multi-RPC `get_account`, owner/active cards, posture hints |
-| UI | Interactive checklists, runbook copy/download, branched recovery scenarios |
-| Docs | Owner vs active primer, related multi-sig / hardware blueprints |
+| Pure | Backup score, social recovery risk, runbook markdown |
+| Live (read-only) | Multi-RPC `get_account`, permission cards, posture hints |
+| UI | Checklists, runbook export, recovery scenarios |
 
-**Never** paste private keys here. Prefer multi-sig weights over sharing seeds.
+**Never** paste private keys here.
 
-## License
-
-MIT — **Pixel Journey**
-
-## Queries and unsigned transactions
-
-`src/api.ts` builds the HTTP requests. `src/usecases.ts` is the worked case: those requests, and an unsigned transaction when this repo already has an action or the chain action is the standard Antelope one for the topic. `executed` is false. Nothing is sent.
-
-The code used to sit in `examples/`. GitHub treats that directory as documentation, so the language bar hid the TypeScript.
+MIT — Pixel Journey
