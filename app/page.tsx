@@ -3,14 +3,17 @@
 import React, { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { AuthorityModelsPanel } from '../src/AuthorityModelsPanel';
 import { BackupChecklist } from '../src/BackupChecklist';
+import { CollusionPanel } from '../src/CollusionPanel';
 import { ComparisonMatrix } from '../src/ComparisonMatrix';
 import { DrillsPanel } from '../src/DrillsPanel';
 import { ExamplesPanel } from '../src/ExamplesPanel';
 import { GlossaryPanel } from '../src/GlossaryPanel';
 import { HybridSketchPanel } from '../src/HybridSketchPanel';
+import { IncidentsPanel } from '../src/IncidentsPanel';
 import { MythsPanel } from '../src/MythsPanel';
 import { OwnerActivePrimer } from '../src/OwnerActivePrimer';
 import { PermissionSummaryPanel } from '../src/PermissionSummaryPanel';
+import { RecommendPanel } from '../src/RecommendPanel';
 import { RecoveryWorkflow } from '../src/RecoveryWorkflow';
 import { RelatedBlueprints } from '../src/RelatedBlueprints';
 import { RunbookPanel } from '../src/RunbookPanel';
@@ -87,10 +90,15 @@ export default function SocialRecoveryPage() {
     }));
   }, []);
 
+  const applyPair = useCallback((p: BackupPosture, pol: SocialRecoveryPolicy) => {
+    setPosture(p);
+    setPolicy(pol);
+    setMessage('Scenario applied to checklists');
+  }, []);
+
   const backupScore = useMemo(() => scoreBackupPosture(posture), [posture]);
   const risks = useMemo(() => analyzeSocialRecovery(policy), [policy]);
   const highCount = risks.filter((r) => r.level === 'high').length;
-
   const acct = accountLabel.trim() || 'account';
 
   const copyShare = async () => {
@@ -116,24 +124,6 @@ export default function SocialRecoveryPage() {
     }
   };
 
-  const downloadJson = () => {
-    downloadTextFile(
-      `${acct}-recovery-plan.json`,
-      exportPlanJson(acct, posture, policy),
-      'application/json'
-    );
-    setMessage('Plan JSON downloaded');
-  };
-
-  const downloadRunbook = () => {
-    downloadTextFile(
-      `${acct}-runbook.md`,
-      generateRunbookMarkdown({ accountName: acct, posture, policy }),
-      'text/markdown;charset=utf-8'
-    );
-    setMessage('Runbook downloaded');
-  };
-
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white p-6">
       <div className="max-w-3xl mx-auto space-y-8">
@@ -145,7 +135,7 @@ export default function SocialRecoveryPage() {
             SOCIAL RECOVERY & KEY BACKUP
           </h1>
           <p className="text-sm opacity-60 mt-2 max-w-xl">
-            Weighted recovery · threshold math · scenarios · offline exports
+            Design · measure collusion · recommend · respond to incidents
           </p>
         </header>
 
@@ -155,26 +145,28 @@ export default function SocialRecoveryPage() {
         >
           <p className="font-medium text-sm">Product recovery ≠ on-chain recovery</p>
           <p>
-            Prefer account-auth or multi-key weights on <code>owner</code>. Never teach
-            full-seed sharing as “social recovery.”
+            Prefer weighted account-auth on <code>owner</code>. Never teach full-seed
+            sharing as social recovery.
           </p>
         </section>
 
         <MythsPanel />
 
+        <RecommendPanel
+          posture={posture}
+          policy={policy}
+          onApplyScenario={applyPair}
+        />
+
         <ComparisonMatrix />
 
-        <ExamplesPanel
-          onApply={(p, pol) => {
-            setPosture(p);
-            setPolicy(pol);
-            setMessage('Example applied to checklists');
-          }}
-        />
+        <ExamplesPanel onApply={applyPair} />
 
         <AuthorityModelsPanel />
 
         <ThresholdCalculator />
+
+        <CollusionPanel />
 
         <HybridSketchPanel />
 
@@ -222,31 +214,33 @@ export default function SocialRecoveryPage() {
           </label>
 
           <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              className="px-3 py-2 rounded-lg text-sm bg-emerald-800"
-              onClick={() => void copyShare()}
-            >
+            <button type="button" className="px-3 py-2 rounded-lg text-sm bg-emerald-800" onClick={() => void copyShare()}>
               Copy share URL
             </button>
-            <button
-              type="button"
-              className="px-3 py-2 rounded-lg text-sm bg-sky-700"
-              onClick={() => void copyJson()}
-            >
+            <button type="button" className="px-3 py-2 rounded-lg text-sm bg-sky-700" onClick={() => void copyJson()}>
               Copy plan JSON
             </button>
             <button
               type="button"
               className="px-3 py-2 rounded-lg text-sm bg-sky-900"
-              onClick={downloadJson}
+              onClick={() => {
+                downloadTextFile(`${acct}-recovery-plan.json`, exportPlanJson(acct, posture, policy), 'application/json');
+                setMessage('Plan JSON downloaded');
+              }}
             >
               Download JSON
             </button>
             <button
               type="button"
               className="px-3 py-2 rounded-lg text-sm bg-teal-800"
-              onClick={downloadRunbook}
+              onClick={() => {
+                downloadTextFile(
+                  `${acct}-runbook.md`,
+                  generateRunbookMarkdown({ accountName: acct, posture, policy }),
+                  'text/markdown;charset=utf-8'
+                );
+                setMessage('Runbook downloaded');
+              }}
             >
               Download runbook.md
             </button>
@@ -283,10 +277,7 @@ export default function SocialRecoveryPage() {
               max={5}
               value={posture.offlineCopies}
               onChange={(e) =>
-                setPosture((p) => ({
-                  ...p,
-                  offlineCopies: Number(e.target.value),
-                }))
+                setPosture((p) => ({ ...p, offlineCopies: Number(e.target.value) }))
               }
               className="w-full mt-1"
             />
@@ -303,9 +294,7 @@ export default function SocialRecoveryPage() {
               <input
                 type="checkbox"
                 checked={posture[key]}
-                onChange={(e) =>
-                  setPosture((p) => ({ ...p, [key]: e.target.checked }))
-                }
+                onChange={(e) => setPosture((p) => ({ ...p, [key]: e.target.checked }))}
               />
               {label}
             </label>
@@ -338,10 +327,7 @@ export default function SocialRecoveryPage() {
               max={7}
               value={policy.helperCount}
               onChange={(e) =>
-                setPolicy((p) => ({
-                  ...p,
-                  helperCount: Number(e.target.value),
-                }))
+                setPolicy((p) => ({ ...p, helperCount: Number(e.target.value) }))
               }
               className="w-full mt-1"
             />
@@ -358,10 +344,7 @@ export default function SocialRecoveryPage() {
               max={7}
               value={policy.threshold}
               onChange={(e) =>
-                setPolicy((p) => ({
-                  ...p,
-                  threshold: Number(e.target.value),
-                }))
+                setPolicy((p) => ({ ...p, threshold: Number(e.target.value) }))
               }
               className="w-full mt-1"
             />
@@ -372,10 +355,7 @@ export default function SocialRecoveryPage() {
               type="checkbox"
               checked={policy.helpersHoldFullSeeds}
               onChange={(e) =>
-                setPolicy((p) => ({
-                  ...p,
-                  helpersHoldFullSeeds: e.target.checked,
-                }))
+                setPolicy((p) => ({ ...p, helpersHoldFullSeeds: e.target.checked }))
               }
             />
             Helpers hold full seeds (anti-pattern)
@@ -386,10 +366,7 @@ export default function SocialRecoveryPage() {
               type="checkbox"
               checked={policy.usesMultisigWeights}
               onChange={(e) =>
-                setPolicy((p) => ({
-                  ...p,
-                  usesMultisigWeights: e.target.checked,
-                }))
+                setPolicy((p) => ({ ...p, usesMultisigWeights: e.target.checked }))
               }
             />
             Uses multi-sig / weighted permissions (preferred)
@@ -401,6 +378,8 @@ export default function SocialRecoveryPage() {
         <RunbookPanel posture={posture} policy={policy} />
 
         <DrillsPanel />
+
+        <IncidentsPanel />
 
         <RecoveryWorkflow />
 
@@ -414,7 +393,7 @@ export default function SocialRecoveryPage() {
           </p>
         )}
 
-        <p className="text-xs opacity-50">Passes 1–12 · educational-reference</p>
+        <p className="text-xs opacity-50">Passes 1–13 · educational-reference</p>
       </div>
     </div>
   );

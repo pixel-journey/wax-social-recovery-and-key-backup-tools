@@ -1,9 +1,9 @@
-# Through Pass 12
+# Through Pass 13
 
 | Pass | Scope |
 |------|--------|
-| 11 | Myths, glossary, hybrid, JSON |
-| **12** | Threshold calculator, +3 scenarios, comparison matrix, file downloads |
+| 12 | Threshold calc, scenarios, downloads |
+| **13** | Collusion explorer, scenario recommender + gaps, incident playbooks |
 
 ```bash
 npm install && npm test && npm run build

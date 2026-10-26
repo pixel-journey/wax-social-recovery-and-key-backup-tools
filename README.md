@@ -1,14 +1,12 @@
 # wax-social-recovery-and-key-backup-tools
 
 > **Trust label:** `educational-reference`  
-> **Status:** Passes **1–12** (2026-10-26)
+> **Status:** Passes **1–13** (2026-10-26)
 
-Full educational kit for WAX **key backup** and **on-chain social recovery**: 8 scenarios, threshold calculator, hybrid sketches, myths, glossary, comparison matrix, runbook/JSON downloads, live permission probe.
+Educational kit for WAX key backup & on-chain social recovery: scenarios, recommender, threshold & collusion math, hybrid sketches, incidents, drills, myths, glossary, exports, live permission probe.
 
 ```bash
 npm install && npm test && npm run build && npm run dev
 ```
-
-[EDUCATION.md](./EDUCATION.md)
 
 MIT — Pixel Journey

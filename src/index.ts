@@ -14,4 +14,7 @@ export {
   totalWeight,
 } from "./thresholdMath";
 export { APPROACH_MATRIX } from "./comparison";
+export { collusionSummary, minimalCoalitions } from "./collusion";
+export { recommendScenarios, postureGaps, policyGaps } from "./recommend";
+export { INCIDENT_PLAYBOOKS } from "./incidents";
 export type { BackupPosture, SocialRecoveryPolicy, RecoveryRisk } from "./types";
