@@ -30,4 +30,13 @@
 
 ## Honesty limits
 
-Scores are **teaching signals**, not chain enforcement. [WAX permissions](https://docs.wax.io/build/core-concepts/permissions) · [Security and recovery](https://docs.wax.io/learn/getting-started/security-and-recovery) · [WharfKit](https://wharfkit.com/). Cluster: [auditor](https://github.com/pixel-journey/wax-account-permission-auditor) · [rotation](https://github.com/pixel-journey/wax-safe-key-rotation-assistant) · [msig](https://github.com/pixel-journey/wax-multi-sig-proposal-builder-and-simulator).
+Scores are **teaching signals**, not chain enforcement.
+
+| Sibling | Distinction |
+| --- | --- |
+| [permission auditor](https://github.com/pixel-journey/wax-account-permission-auditor) | Structure score |
+| [key rotation](https://github.com/pixel-journey/wax-safe-key-rotation-assistant) | Add-first sequence |
+| [multi-sig builder](https://github.com/pixel-journey/wax-multi-sig-proposal-builder-and-simulator) | eosio.msig proposals |
+| [session keys](https://github.com/pixel-journey/wax-wharfkit-session-keys-and-linked-permissions) | Limited game authority |
+
+[WAX permissions](https://docs.wax.io/build/core-concepts/permissions) · [Security and recovery](https://docs.wax.io/learn/getting-started/security-and-recovery) · [WharfKit](https://wharfkit.com/).
